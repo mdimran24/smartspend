@@ -1,0 +1,13 @@
+fastapi
+uvicorn
+sqlalchemy
+pydantic
+python-dotenv
+
+# Optional: if you plan to do data analysis or ML
+pandas
+matplotlib
+scikit-learn
+
+# Optional: if you plan to enable CORS for frontend-backend connection
+fastapi[all]
