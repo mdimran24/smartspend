@@ -6,7 +6,10 @@ from .. import auth
 from .. import database, models
 from ..schemas import UserBase
 
-router = APIRouter()
+router = APIRouter(
+    prefix='/users',
+    tags = ['users']
+)
 
 def get_db():
     db = database.SessionLocal()
