@@ -9,7 +9,6 @@ from ..schemas import ExpenseBase, ExpenseUpdateRequest, UserBase
 from app import schemas
 
 router = APIRouter(
-    prefix='/expenses',
     tags = ['expenses']
 )
 

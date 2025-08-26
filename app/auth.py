@@ -10,14 +10,20 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from jose import jwt, JWTError
 
 from app.models import Users
+from dotenv import load_dotenv
+import os
+
+from app.schemas import UserResponse
+
+load_dotenv()
 
 router = APIRouter(
     prefix='/auth',
     tags = ['auth']
 )
 
-SECRET_KEY = 'qwerty'
-ALGORITHM = 'HS256'
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM")
 
 bcrypt_context = CryptContext(schemes=['bcrypt'], deprecated = 'auto')
 oauth2_bearer = OAuth2PasswordBearer(tokenUrl='auth/token')
@@ -30,6 +36,7 @@ class CreateUserRequest(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    user_id: int
 
 def get_db():
     db=SessionLocal()
@@ -57,15 +64,14 @@ async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm,
     if not user:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail='Could not validate user.')
     token = create_access_token(user.email, user.id, timedelta(minutes=20))
-
-    return {'access_token': token, 'token_type': 'bearer'}
-
+    
+    return {'access_token': token, 'token_type': 'bearer', 'user_id': user.id}
 
 
 def authenticate_user(email: str, password: str, db):
     user = db.query(Users).filter(Users.email == email).first()
-    print("User hashed pass" + user.hashed_password)
     if not user:
+        print(f"No user found with email: {email}")
         return False
     if not bcrypt_context.verify(password, user.hashed_password):
         return False
@@ -91,3 +97,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_bearer)]):
     
     except JWTError:
         raise HTTPException(status_code = status.HTTP_401_UNAUTHORIZED, detail='Could not validate user')
+    
+@router.get("/me", response_model= UserResponse)
+async def read_current_user(user: dict = Depends(get_current_user)):
+    return user

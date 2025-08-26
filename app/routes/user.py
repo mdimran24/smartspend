@@ -7,7 +7,6 @@ from .. import database, models
 from ..schemas import UserBase
 
 router = APIRouter(
-    prefix='/users',
     tags = ['users']
 )
 
@@ -21,13 +20,13 @@ def get_db():
 db_dependency = Annotated[Session, Depends(get_db)]
 user_dependency = Annotated[dict, Depends(auth.get_current_user)]
 
-@router.post("/users")
-async def register_user(user: UserBase, db:db_dependency):
-    db_user = models.Users(name = user.name, email = user.email)
-    db.add(db_user)
-    db.commit()
-    db.refresh(db_user)
-    return db_user
+# @router.post("/users")
+# async def register_user(user: UserBase, db:db_dependency):
+#     db_user = models.Users(name = user.name, email = user.email)
+#     db.add(db_user)
+#     db.commit()
+#     db.refresh(db_user)
+#     return db_user
 
 @router.get("/users")
 async def get_users(db:db_dependency):
