@@ -3,7 +3,7 @@ import api from "../api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export const useExpense = () => {
+export const useCreateExpense = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuthContext();
@@ -31,5 +31,5 @@ export const useExpense = () => {
     }
 
 
-      return { addExpense, isLoading, error };
+      return { addExpense };
 }

@@ -9,6 +9,7 @@ export const authReducer = (state, action) => {
         ...state,
         user: action.payload, // whole payload goes inside user
         isAuthenticated: true,
+        
       };
     case "LOGOUT":
       return {

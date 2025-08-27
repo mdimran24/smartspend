@@ -42,7 +42,7 @@ async def get_expenses(db:db_dependency, user: (user_dependency)):
     return db.query(models.Expenses).filter(models.Expenses.user_id == user["id"]).all()
 
 
-@router.put("/expenses")
+@router.put("/expenses/{expense_id}")
 async def update_expense(db: db_dependency, user: user_dependency, updatedExpense : ExpenseUpdateRequest, expense_id: int):
     expense = db.query(models.Expenses).filter(models.Expenses.id == expense_id).first()
     if not expense:

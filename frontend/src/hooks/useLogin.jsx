@@ -18,9 +18,11 @@ export const useLogin = () => {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
       if (response.data.access_token) {
-        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data));
+        
         // update the auth context
         dispatch({ type: "LOGIN", payload: response.data });
+        
         navigate("/expenses");
       }
     } catch (err) {
