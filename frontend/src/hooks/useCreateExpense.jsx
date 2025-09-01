@@ -2,11 +2,12 @@ import { useAuthContext } from "./useAuthContext";
 import api from "../api";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useExpenseContext } from "../context/ExpenseContext";
 export const useCreateExpense = () => {
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const { user } = useAuthContext();
+    const { dispatch } = useExpenseContext();
 
     async function addExpense(name, amount, category, timestamp){
 
@@ -21,15 +22,15 @@ export const useCreateExpense = () => {
                 { headers: { "Content-Type": "application/json",
                   Authorization: `Bearer ${user.access_token}`},
                 });
-            if (response.data.id){
-                alert("success", response.data)
-            }
+            dispatch({type: "ADD_EXPENSE", payload: response.data})
+        
         } catch (error){
             setIsLoading(false);
+            setError(error.message)
             console.error("Expense Creation Failed", error)
         }
     }
 
 
-      return { addExpense };
+      return { error, isLoading, addExpense };
 }

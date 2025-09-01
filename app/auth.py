@@ -57,6 +57,9 @@ async def create_user(db: db_dependency, create_user_request: CreateUserRequest)
 
     db.add(create_user_model)
     db.commit()
+    db.refresh(create_user_model)
+    return {'id': create_user_model.id, 'email': create_user_model.email, 'name': create_user_model.name}
+
 
 @router.post("/token", response_model=Token)
 async def login_for_access_token(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency):
@@ -72,9 +75,9 @@ def authenticate_user(email: str, password: str, db):
     user = db.query(Users).filter(Users.email == email).first()
     if not user:
         print(f"No user found with email: {email}")
-        return False
+        return None
     if not bcrypt_context.verify(password, user.hashed_password):
-        return False
+        return None
     return user
 
 def create_access_token(email: str, user_id: int, expires_delta: timedelta):

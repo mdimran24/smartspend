@@ -1,8 +1,6 @@
-
-
 import React, { useState } from 'react';
-import api from '../api';
 import { useLogin } from '../hooks/useLogin'
+
 export default function Login(  ) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -10,7 +8,7 @@ export default function Login(  ) {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-        login(email, password)
+        await login(email, password)
 
 
     }

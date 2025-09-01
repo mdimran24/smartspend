@@ -55,7 +55,7 @@ async def update_expense(db: db_dependency, user: user_dependency, updatedExpens
     db.refresh(expense)
     return expense
 
-@router.delete("/expenses")
+@router.delete("/expenses/{expense_id}")
 async def delete_expense(db: db_dependency, expense_id: int, user: user_dependency):
     expense = db.query(models.Expenses).filter(
         models.Expenses.id == expense_id,

@@ -1,26 +1,31 @@
 import React, { useState } from 'react';
-import api from '../api';
 import { useCreateExpense } from '../hooks/useCreateExpense';
-import { useAuthContext } from "../hooks/useAuthContext"
 import { useUpdateExpense } from '../hooks/useUpdateExpense';
 import { useEffect } from 'react';
+
 export default function ExpenseForm( {expense} ) {
     const [name, setName] = useState("")
     const [amount, setAmount] = useState("")
     const [category, setCategory] = useState("")
 
 
-    const {addExpense} = useCreateExpense()
+    const {createError, createIsLoading, addExpense} = useCreateExpense()
 
-    const {updateExpense} = useUpdateExpense()
+    const {updateError, updateIsLoading, updateExpense} = useUpdateExpense()
 
     const handleCreateSubmit = async (e) => {
       e.preventDefault();
       addExpense(name, amount, category, new Date().getTime());
+      setAmount("")
+      setName("")
+      setCategory("")
+
     };
+    
     const handleUpdateSubmit = async (e) => {
       e.preventDefault();
       updateExpense(name, amount, category, new Date().getTime(), expense.id);
+
     };
 
     useEffect(() =>{
@@ -42,7 +47,7 @@ export default function ExpenseForm( {expense} ) {
         type="text" 
         onChange={(e) => setName(e.target.value)} 
         value= {name}
-        placeholder= {name}
+
         required
       />
       <label>Amount:</label>
@@ -50,7 +55,7 @@ export default function ExpenseForm( {expense} ) {
         type="number" 
         onChange={(e) => setAmount(e.target.value)} 
         value= {amount}
-        placeholder= {amount}
+
         required
       />
 
@@ -74,7 +79,7 @@ export default function ExpenseForm( {expense} ) {
       
 
       <button className="mt-4 bg-blue-600 text-white font-bold  text-sm px-4 py-2 rounded shadow hover:bg-blue-700 outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 w-[100%]">{expense ? "Update" : "Add"}</button>
-      {/* {error && <div className="error">{error}</div>} */}
+      {expense ? updateError : createError && <div className="error">{expense ? updateError : createError}</div>}
     </form>
     </>
 )

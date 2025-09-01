@@ -1,29 +1,35 @@
 import { useEffect, useState } from "react";
-import api from "../api";
 import ExpenseForm from "../components/ExpenseForm";
 import { useAuthContext } from "../hooks/useAuthContext";
 import UpdateModal from "../components/UpdateModal";
+import { useDeleteExpense } from "../hooks/useDeleteExpense";
+import { useExpenseContext } from "../context/ExpenseContext";
+import { useFetchExpenses } from "../hooks/useFetchExpense"
+
 export default function Expenses() {
   const { user } = useAuthContext();
-  const [expenses, setExpenses] = useState([]);
-  useEffect(() => {
-    async function getExpenses() {
-      try {
-        const response = await api.get("/expenses", {
-          headers: { Authorization: `Bearer ${user.access_token}` },
-        });
-        if (response.data) {
-          setExpenses(response.data);
-        }
-      } catch (error) {
-        alert("Failed getting expense", error);
-      }
-    }
+  const {deleteExpense} = useDeleteExpense()
+  const { expenses, dispatch } = useExpenseContext();
+  const {fetchExpenses} = useFetchExpenses ()
 
-    if (user) {
-      getExpenses();
+  useEffect(() => {
+    if(user){
+      fetchExpenses()
     }
   }, [user]);
+
+
+
+  const handleSubmit = async (e, expense) => {
+      e.preventDefault();
+      try{
+        await deleteExpense(expense.id);
+        dispatch({ type: "DELETE_EXPENSE", payload: expense.id });
+    } catch (error)  {
+      console.error("Failed to delete expense", error)
+    }
+  }
+  
 
   return (
     <>
@@ -63,7 +69,7 @@ export default function Expenses() {
                     <div className="items-center">
                       <button
                         className="lg:absolute lg:top-16 lg:right-6 lg:m-0  my-2  bg-red-600 text-white font-bold  text-sm px-[65px] py-2  rounded shadow hover:bg-red-700 outline-none focus:outline-none  ease-linear transition-all duration-150"
-                        onClick
+                        onClick = {(e) => handleSubmit(e, exp)}
                       >
                         Remove
                       </button>
